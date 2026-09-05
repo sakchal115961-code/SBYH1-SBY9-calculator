@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบคำนวณพาเลทและยอดบรรจุ (ส่งออก)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --surface: #ffffff;
+      --bg: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #b45309;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sarabun", sans-serif; }
+    body { 
+      background: var(--bg); 
+      color: var(--text-main); 
+      padding: 12px 10px 80px 10px; /* เผื่อขอบล่าง 80px กันแถบโฆษณาบัง */
+      display: flex; 
+      justify-content: center; 
+      min-height: 100vh; 
+    }
+    
+    .dashboard-container { 
+      width: 100%; 
+      max-width: 980px; 
+      background: var(--surface); 
+      padding: 20px 16px; 
+      border-radius: 20px; 
+      border: 1px solid #cbd5e1; 
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05); 
+    }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+    .header-titles h1 { font-size: 20px; font-weight: 800; color: #0f172a; line-height: 1.25; }
+    .header-titles p { font-size: 12px; color: var(--text-muted); margin-top: 3px; font-weight: 500; }
+    .badge-export { 
+      background: #eff6ff; 
+      border: 1px solid #bfdbfe; 
+      color: #1d4ed8; 
+      font-size: 11px; 
+      font-weight: 800; 
+      padding: 4px 10px; 
+      border-radius: 12px; 
+      white-space: nowrap;
+    }
+
+    /* Control Panel */
+    .control-panel {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-tag::before { content: ""; width: 3px; height: 11px; background: var(--primary); border-radius: 2px; }
+
+    /* SKU Selectors ปรับให้ยืดหยุ่นสูง */
+    .sku-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 8px; 
+      margin-bottom: 14px; 
+    }
+    .sku-btn {
+      padding: 10px 4px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      min-height: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .sku-btn .size-name { font-size: 14px; font-weight: 800; color: #1e293b; line-height: 1.1; }
+    .sku-btn .size-cap { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-top: 3px; line-height: 1.1; }
+    .sku-btn:active { transform: scale(0.97); }
+    .sku-btn.active {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    .sku-btn.active .size-name { color: var(--primary-dark); }
+    .sku-btn.active .size-cap { color: var(--primary); }
+
+    /* Target Input & Slider */
+    .input-row { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      width: 100%;
+    }
+    .slider-track { 
+      flex: 1; 
+      min-width: 0; /* ป้องกันแถบสไลเดอร์ดันช่องตัวเลขหลุดจอ */
+      accent-color: var(--primary); 
+      height: 6px; 
+      cursor: pointer; 
+    }
+    .input-val-box {
+      width: 125px; /* พอดีจอ ไม่ล้น */
+      flex-shrink: 0;
+      text-align: right;
+      font-size: 20px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      outline: none;
+    }
+    .input-val-box:focus { border-color: var(--primary); }
+    .input-val-box:disabled { background: #e2e8f0; opacity: 0.6; }
+
+    /* KPI Summary Cards */
+    .summary-grid { 
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 8px; 
+      margin-bottom: 16px; 
+    }
+    .sum-card {
+      padding: 10px 8px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      text-align: left;
+    }
+    .sum-card.highlight { background: #eff6ff; border-color: #bfdbfe; }
+    .sum-card .card-title { font-size: 10px; font-weight: 800; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sum-card.highlight .card-title { color: var(--primary); }
+    .sum-card .card-num { font-size: 22px; font-weight: 900; margin: 2px 0; color: #0f172a; line-height: 1.1; }
+    .sum-card.highlight .card-num { color: #1e3a8a; }
+    .sum-card .card-sub { font-size: 10px; font-weight: 600; color: #94a3b8; white-space: nowrap; }
+    .sum-card.highlight .card-sub { color: #3b82f6; }
+
+    /* Visual Box */
+    .vis-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+    .vis-header { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+    .vis-header .title { font-size: 13px; font-weight: 800; color: #1e293b; }
+    .vis-header .badge { font-size: 11px; font-weight: 600; background: #f8fafc; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 6px; color: #475569; display: inline-block; }
+    .vis-header .badge.alert { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); }
+
+    .vis-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .vis-card { text-align: center; }
+    .vis-card-title { font-size: 11px; font-weight: 800; color: #475569; display: block; margin-bottom: 6px; white-space: nowrap; }
+    .vis-area {
+      height: 130px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      overflow: hidden;
+    }
+
+    .pallet-cube {
+      width: 60px;
+      height: 75px;
+      border: 1.5px solid #60a5fa;
+      background: #eff6ff;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .pallet-cube .num { font-size: 20px; font-weight: 900; color: var(--primary); }
+    .pallet-cube .txt { font-size: 9px; font-weight: 800; color: #60a5fa; }
+
+    .layer-column { width: 100%; height: 100%; display: flex; flex-direction: column-reverse; gap: 2px; }
+    .layer-bar { width: 100%; flex: 1; border-radius: 3px; font-size: 8px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .layer-bar.active { background: var(--primary); color: #ffffff; }
+    .layer-bar.inactive { background: #e2e8f0; color: #94a3b8; }
+
+    .pallet-layout-container { border: 1px dashed #94a3b8; border-radius: 6px; padding: 2px; background: #ffffff; }
+    .box-cell { border-radius: 2px; border: 1px solid #cbd5e1; font-size: 8px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .box-cell.active { background: #3b82f6; border-color: var(--primary-dark); color: #ffffff; }
+    .box-cell.inactive { background: #f8fafc; color: #cbd5e1; }
+
+    .loose-num { font-size: 28px; font-weight: 900; color: #334155; line-height: 1; }
+    .loose-txt { font-size: 10px; font-weight: 700; color: #94a3b8; margin-top: 4px; }
+
+    /* Table */
+    .table-card { border-radius: 14px; border: 1px solid var(--border); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; background: #ffffff; min-width: 320px; }
+    th { background: #f8fafc; color: #475569; font-size: 10px; font-weight: 800; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 600; }
+    tr.total-row { background: #f8fafc; font-weight: 800; border-top: 1.5px solid var(--border); }
+    tr.total-row td { color: #0f172a; font-size: 13px; padding: 10px; }
+    .total-val { color: var(--primary); font-size: 15px; font-weight: 900; }
+
+    /* ปรับแต่งสำหรับหน้าจอมือถือโดยเฉพาะ */
+    @media (max-width: 640px) {
+      .dashboard-container { padding: 14px 12px; }
+      .header-bar { flex-direction: column; align-items: flex-start; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .vis-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .sku-btn .size-name { font-size: 13px; }
+      .sku-btn .size-cap { font-size: 9px; }
+      .input-val-box { width: 110px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <div class="header-bar">
+      <div class="header-titles">
+        <h1>ระบบคำนวณพาเลทและยอดบรรจุ</h1>
+        <p>คำนวณพาเลทเต็ม ชั้น กล่อง และเศษขวด สำหรับสายการผลิตส่งออก</p>
+      </div>
+      <span class="badge-export">EXPORT ONLY</span>
+    </div>
+
+    <div class="control-panel">
+      <div class="section-tag">1. กรุณาเลือกขนาดบรรจุภัณฑ์ (SIZE)</div>
+      <div class="sku-grid">
+        <button class="sku-btn" id="btn-830_EXP" onclick="selectSku('830_EXP')">
+          <span class="size-name">ขนาด 830</span>
+          <span class="size-cap">1,344 ขวด/พาเลท</span>
+        </button>
+
+        <button class="sku-btn" id="btn-450_EXP" onclick="selectSku('450_EXP')">
+          <span class="size-name">ขนาด 450</span>
+          <span class="size-cap">1,512 ขวด/พาเลท</span>
+        </button>
+
+        <button class="sku-btn" id="btn-350_EXP" onclick="selectSku('350_EXP')">
+          <span class="size-name">ขนาด 350</span>
+          <span class="size-cap">2,160 ขวด/พาเลท</span>
+        </button>
+      </div>
+
+      <div class="section-tag">2. ยอดผลิตเป้าหมาย (ขวด)</div>
+      <div class="input-row">
+        <input type="range" id="volumeSlider" class="slider-track" min="0" max="1000000" step="50" value="0" disabled>
+        <input type="number" id="volumeInput" class="input-val-box" min="0" max="1000000" value="0" placeholder="0" disabled>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="sum-card highlight">
+        <span class="card-title">พาเลทเต็ม</span>
+        <div class="card-num" id="cardFullPallets">0</div>
+        <span class="card-sub" id="cardFullPalletsBtl">0 ขวด</span>
+      </div>
+      <div class="sum-card">
+        <span class="card-title">ชั้นเต็ม (พาเลทเศษ)</span>
+        <div class="card-num" id="cardPartialLayers">0</div>
+        <span class="card-sub" id="cardPartialLayersBtl">0 ขวด</span>
+      </div>
+      <div class="sum-card">
+        <span class="card-title">เศษกล่อง</span>
+        <div class="card-num" id="cardExtraBoxes">0</div>
+        <span class="card-sub" id="cardExtraBoxesBtl">0 ขวด</span>
+      </div>
+      <div class="sum-card">
+        <span class="card-title">เศษขวดปลีก</span>
+        <div class="card-num" id="cardLooseBottles">0</div>
+        <span class="card-sub" id="cardLooseBottlesBtl">0 ขวด</span>
+      </div>
+    </div>
+
+    <div class="vis-box">
+      <div class="vis-header">
+        <span class="title">ภาพจำลองการจัดเรียง (พาเลทสุดท้าย)</span>
+        <span class="badge alert" id="skuSpecLabel">⚠️ กรุณากดเลือกขนาดด้านบนก่อน</span>
+      </div>
+
+      <div class="vis-grid">
+        <div class="vis-card">
+          <span class="vis-card-title" id="labelPalletStack">1. พาเลทเต็ม</span>
+          <div class="vis-area">
+            <div class="pallet-cube">
+              <span class="num" id="visPalletNum">0</span>
+              <span class="txt">PALLETS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vis-card">
+          <span class="vis-card-title" id="labelPartialLayer">2. ชั้นเต็ม</span>
+          <div class="vis-area">
+            <div class="layer-column" id="layerVisualContainer"></div>
+          </div>
+        </div>
+
+        <div class="vis-card">
+          <span class="vis-card-title" id="labelLayerBoxes">3. กล่องบนชั้นเศษ</span>
+          <div class="vis-area" id="boxVisualContainer"></div>
+        </div>
+
+        <div class="vis-card">
+          <span class="vis-card-title" id="labelLoose">4. เศษขวดปลีก</span>
+          <div class="vis-area" style="flex-direction: column;">
+            <span class="loose-num" id="visLooseNum">0</span>
+            <span class="loose-txt">ขวด</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">รายการ</th>
+            <th style="text-align: center;">จำนวน</th>
+            <th style="text-align: right;">ความจุ</th>
+            <th style="text-align: right;">รวมขวด</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: 800;">พาเลทเต็ม (Full Pallets)</td>
+            <td style="text-align: center;" id="tblPalletUnits">0 พาเลท</td>
+            <td style="text-align: right;" id="tblPalletCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 800;" id="tblPalletTotal">0</td>
+          </tr>
+          <tr>
+            <td style="font-weight: 800;">ชั้นเต็มในพาเลทสุดท้าย (Layers)</td>
+            <td style="text-align: center;" id="tblLayerUnits">0 ชั้น</td>
+            <td style="text-align: right;" id="tblLayerCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 800;" id="tblLayerTotal">0</td>
+          </tr>
+          <tr>
+            <td style="font-weight: 800;">เศษกล่องในชั้นบนสุด (Boxes)</td>
+            <td style="text-align: center;" id="tblBoxUnits">0 กล่อง</td>
+            <td style="text-align: right;" id="tblBoxCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 800;" id="tblBoxTotal">0</td>
+          </tr>
+          <tr>
+            <td style="font-weight: 800;">เศษขวดปลีก (Bottles)</td>
+            <td style="text-align: center;" id="tblLooseUnits">0 ขวด</td>
+            <td style="text-align: right;">1 ขวด</td>
+            <td style="text-align: right; font-weight: 800;" id="tblLooseTotal">0</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="3">ยอดรวมทั้งหมด</td>
+            <td style="text-align: right;" class="total-val" id="tblGrandTotal">0 ขวด</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    const skuConfig = {
+      '830_EXP': { name: 'ขนาด 830', layerPerPal: 8,  boxPerLayer: 14, btlPerBox: 12 },
+      '450_EXP': { name: 'ขนาด 450', layerPerPal: 7,  boxPerLayer: 18, btlPerBox: 12 },
+      '350_EXP': { name: 'ขนาด 350', layerPerPal: 10, boxPerLayer: 18, btlPerBox: 12 }
+    };
+
+    let activeSku = null;
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeInput = document.getElementById('volumeInput');
+
+    function selectSku(sku) {
+      activeSku = sku;
+      volumeSlider.disabled = false;
+      volumeInput.disabled = false;
+
+      // รีเซ็ตยอดเป็น 0 ทุกครั้งที่เปลี่ยนไซส์
+      volumeInput.value = 0;
+      volumeSlider.value = 0;
+
+      Object.keys(skuConfig).forEach(key => {
+        const btn = document.getElementById(`btn-${key}`);
+        if (key === sku) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      calculate();
+    }
+
+    volumeSlider.addEventListener('input', (e) => {
+      volumeInput.value = e.target.value;
+      calculate();
+    });
+
+    volumeInput.addEventListener('input', (e) => {
+      let val = parseInt(e.target.value) || 0;
+      if (val > 1000000) val = 1000000;
+      volumeSlider.value = val;
+      calculate();
+    });
+
+    function calculate() {
+      if (!activeSku) return;
+
+      const totalDemand = Math.max(0, parseInt(volumeInput.value) || 0);
+      const spec = skuConfig[activeSku];
+
+      const btlPerLayer = spec.boxPerLayer * spec.btlPerBox;
+      const btlPerPal = btlPerLayer * spec.layerPerPal;
+
+      const fullPallets = Math.floor(totalDemand / btlPerPal);
+      const remAfterPallets = totalDemand % btlPerPal;
+
+      const partialLayers = Math.floor(remAfterPallets / btlPerLayer);
+      const remAfterLayers = remAfterPallets % btlPerLayer;
+
+      const extraBoxes = Math.floor(remAfterLayers / spec.btlPerBox);
+      const looseBottles = remAfterLayers % spec.btlPerBox;
+
+      // สรุปยอด
+      document.getElementById('cardFullPallets').textContent = fullPallets.toLocaleString();
+      document.getElementById('cardFullPalletsBtl').textContent = (fullPallets * btlPerPal).toLocaleString() + ' ขวด';
+
+      document.getElementById('cardPartialLayers').textContent = partialLayers;
+      document.getElementById('cardPartialLayersBtl').textContent = (partialLayers * btlPerLayer).toLocaleString() + ' ขวด';
+
+      document.getElementById('cardExtraBoxes').textContent = extraBoxes;
+      document.getElementById('cardExtraBoxesBtl').textContent = (extraBoxes * spec.btlPerBox).toLocaleString() + ' ขวด';
+
+      document.getElementById('cardLooseBottles').textContent = looseBottles;
+      document.getElementById('cardLooseBottlesBtl').textContent = looseBottles.toLocaleString() + ' ขวด';
+
+      const specBadge = document.getElementById('skuSpecLabel');
+      specBadge.className = 'badge';
+      specBadge.textContent = `${spec.btlPerBox} ขวด/กล่อง · ${spec.boxPerLayer} กล่อง/ชั้น · ${spec.layerPerPal} ชั้น/พาเลท (${btlPerPal.toLocaleString()} ขวด/พาเลท)`;
+      
+      document.getElementById('labelPalletStack').textContent = `1. พาเลทเต็ม (${fullPallets.toLocaleString()})`;
+      document.getElementById('visPalletNum').textContent = fullPallets.toLocaleString();
+
+      document.getElementById('labelPartialLayer').textContent = `2. ชั้นเต็ม (${partialLayers}/${spec.layerPerPal} ชั้น)`;
+      renderLayerVisual(partialLayers, spec.layerPerPal);
+
+      document.getElementById('labelLayerBoxes').textContent = `3. กล่อง (${extraBoxes}/${spec.boxPerLayer})`;
+      renderBoxVisual(extraBoxes, spec.boxPerLayer);
+
+      document.getElementById('labelLoose').textContent = `4. เศษขวด (${looseBottles})`;
+      document.getElementById('visLooseNum').textContent = looseBottles;
+
+      // ตาราง
+      document.getElementById('tblPalletUnits').textContent = `${fullPallets.toLocaleString()} พาเลท`;
+      document.getElementById('tblPalletCap').textContent = `${btlPerPal.toLocaleString()} ขวด`;
+      document.getElementById('tblPalletTotal').textContent = (fullPallets * btlPerPal).toLocaleString();
+
+      document.getElementById('tblLayerUnits').textContent = `${partialLayers} / ${spec.layerPerPal} ชั้น`;
+      document.getElementById('tblLayerCap').textContent = `${btlPerLayer.toLocaleString()} ขวด`;
+      document.getElementById('tblLayerTotal').textContent = (partialLayers * btlPerLayer).toLocaleString();
+
+      document.getElementById('tblBoxUnits').textContent = `${extraBoxes} / ${spec.boxPerLayer} กล่อง`;
+      document.getElementById('tblBoxCap').textContent = `${spec.btlPerBox} ขวด`;
+      document.getElementById('tblBoxTotal').textContent = (extraBoxes * spec.btlPerBox).toLocaleString();
+
+      document.getElementById('tblLooseUnits').textContent = `${looseBottles} ขวด`;
+      document.getElementById('tblLooseTotal').textContent = looseBottles.toLocaleString();
+
+      document.getElementById('tblGrandTotal').textContent = totalDemand.toLocaleString() + ' ขวด';
+    }
+
+    function renderLayerVisual(activeLayers, totalLayers) {
+      const container = document.getElementById('layerVisualContainer');
+      container.innerHTML = '';
+      for (let i = 0; i < totalLayers; i++) {
+        const bar = document.createElement('div');
+        bar.className = `layer-bar ${i < activeLayers ? 'active' : 'inactive'}`;
+        bar.textContent = `L${i + 1}`;
+        container.appendChild(bar);
+      }
+    }
+
+    function renderBoxVisual(activeBoxes, totalBoxes) {
+      const container = document.getElementById('boxVisualContainer');
+      container.innerHTML = '';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'pallet-layout-container';
+
+      if (activeSku === '830_EXP') {
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'column';
+        wrap.style.gap = '2px';
+
+        const topGrid = document.createElement('div');
+        topGrid.style.display = 'grid';
+        topGrid.style.gridTemplateColumns = 'repeat(4, 22px)';
+        topGrid.style.gridTemplateRows = 'repeat(2, 24px)';
+        topGrid.style.gap = '2px';
+
+        for (let i = 1; i <= 8; i++) {
+          const cell = document.createElement('div');
+          cell.className = `box-cell ${i <= activeBoxes ? 'active' : 'inactive'}`;
+          cell.textContent = i;
+          topGrid.appendChild(cell);
+        }
+
+        const bottomGrid = document.createElement('div');
+        bottomGrid.style.display = 'grid';
+        bottomGrid.style.gridTemplateColumns = 'repeat(3, 29px)';
+        bottomGrid.style.gridTemplateRows = 'repeat(2, 20px)';
+        bottomGrid.style.gap = '2px';
+
+        for (let i = 9; i <= 14; i++) {
+          const cell = document.createElement('div');
+          cell.className = `box-cell ${i <= activeBoxes ? 'active' : 'inactive'}`;
+          cell.textContent = i;
+          bottomGrid.appendChild(cell);
+        }
+
+        wrap.appendChild(topGrid);
+        wrap.appendChild(bottomGrid);
+
+      } else if (activeSku === '450_EXP' || activeSku === '350_EXP') {
+        wrap.style.display = 'flex';
+        wrap.style.flexDirection = 'row';
+        wrap.style.gap = '2px';
+
+        const leftGrid = document.createElement('div');
+        leftGrid.style.display = 'grid';
+        leftGrid.style.gridTemplateColumns = 'repeat(2, 20px)';
+        leftGrid.style.gridTemplateRows = 'repeat(4, 22px)';
+        leftGrid.style.gap = '2px';
+
+        const leftIndices = [11, 12, 13, 14, 15, 16, 17, 18];
+        leftIndices.forEach(num => {
+          const cell = document.createElement('div');
+          cell.className = `box-cell ${num <= activeBoxes ? 'active' : 'inactive'}`;
+          cell.textContent = num;
+          leftGrid.appendChild(cell);
+        });
+
+        const rightGrid = document.createElement('div');
+        rightGrid.style.display = 'grid';
+        rightGrid.style.gridTemplateColumns = 'repeat(2, 20px)';
+        rightGrid.style.gridTemplateRows = 'repeat(5, 17px)';
+        rightGrid.style.gap = '2px';
+
+        const rightIndices = [7, 8, 9, 10, 1, 2, 3, 4, 5, 6];
+        rightIndices.forEach(num => {
+          const cell = document.createElement('div');
+          cell.className = `box-cell ${num <= activeBoxes ? 'active' : 'inactive'}`;
+          cell.textContent = num;
+          rightGrid.appendChild(cell);
+        });
+
+        wrap.appendChild(leftGrid);
+        wrap.appendChild(rightGrid);
+      }
+
+      container.appendChild(wrap);
+    }
+  </script>
+</body>
+</html>
