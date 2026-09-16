@@ -18,13 +18,15 @@
       --warning-bg: #fffbeb;
       --warning-border: #fde68a;
       --warning-text: #b45309;
+      --success: #16a34a;
+      --disabled: #94a3b8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sarabun", sans-serif; }
     body { 
       background: var(--bg); 
       color: var(--text-main); 
-      padding: 12px 10px 80px 10px; /* เผื่อขอบล่าง 80px กันแถบโฆษณาบัง */
+      padding: 12px 10px 80px 10px;
       display: flex; 
       justify-content: center; 
       min-height: 100vh; 
@@ -84,7 +86,7 @@
     }
     .section-tag::before { content: ""; width: 3px; height: 11px; background: var(--primary); border-radius: 2px; }
 
-    /* SKU Selectors ปรับให้ยืดหยุ่นสูง */
+    /* SKU Selectors */
     .sku-grid { 
       display: grid; 
       grid-template-columns: repeat(3, 1fr); 
@@ -125,13 +127,13 @@
     }
     .slider-track { 
       flex: 1; 
-      min-width: 0; /* ป้องกันแถบสไลเดอร์ดันช่องตัวเลขหลุดจอ */
+      min-width: 0;
       accent-color: var(--primary); 
       height: 6px; 
       cursor: pointer; 
     }
     .input-val-box {
-      width: 125px; /* พอดีจอ ไม่ล้น */
+      width: 125px;
       flex-shrink: 0;
       text-align: right;
       font-size: 20px;
@@ -169,12 +171,12 @@
     .sum-card.highlight .card-sub { color: #3b82f6; }
 
     /* Visual Box */
-    .vis-box {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      padding: 14px;
-      border-radius: 16px;
-      margin-bottom: 16px;
+    .vis-box { 
+      background: #ffffff; 
+      border: 1px solid var(--border); 
+      padding: 14px; 
+      border-radius: 16px; 
+      margin-bottom: 16px; 
     }
     .vis-header { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
     .vis-header .title { font-size: 13px; font-weight: 800; color: #1e293b; }
@@ -224,7 +226,7 @@
     .loose-txt { font-size: 10px; font-weight: 700; color: #94a3b8; margin-top: 4px; }
 
     /* Table */
-    .table-card { border-radius: 14px; border: 1px solid var(--border); overflow-x: auto; }
+    .table-card { border-radius: 14px; border: 1px solid var(--border); overflow-x: auto; margin-bottom: 16px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; background: #ffffff; min-width: 320px; }
     th { background: #f8fafc; color: #475569; font-size: 10px; font-weight: 800; padding: 8px 10px; border-bottom: 1px solid var(--border); }
     td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 600; }
@@ -232,7 +234,149 @@
     tr.total-row td { color: #0f172a; font-size: 13px; padding: 10px; }
     .total-val { color: var(--primary); font-size: 15px; font-weight: 900; }
 
-    /* ปรับแต่งสำหรับหน้าจอมือถือโดยเฉพาะ */
+    /* Camera Section */
+    .camera-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .camera-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .btn-camera {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      transition: all 0.2s;
+    }
+    .btn-camera:active {
+      transform: scale(0.97);
+      background: var(--primary-dark);
+    }
+    .btn-camera svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .photo-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #f8fafc;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .btn-delete-photo {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(239, 68, 68, 0.9);
+      color: #ffffff;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .photo-badge {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      background: rgba(15, 23, 42, 0.75);
+      color: #ffffff;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .photo-empty {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      padding: 16px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+    }
+
+    /* Submit Section */
+    .submit-panel {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled {
+      background: var(--disabled) !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+      transform: none !important;
+      opacity: 0.85;
+    }
+    .status-msg {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px;
+      border-radius: 10px;
+      display: none;
+    }
+    .status-msg.sending { display: block; background: #eff6ff; color: #1d4ed8; }
+    .status-msg.success { display: block; background: #f0fdf4; color: #15803d; }
+    .status-msg.error { display: block; background: #fef2f2; color: #b91c1c; }
+
     @media (max-width: 640px) {
       .dashboard-container { padding: 14px 12px; }
       .header-bar { flex-direction: column; align-items: flex-start; }
@@ -241,6 +385,8 @@
       .sku-btn .size-name { font-size: 13px; }
       .sku-btn .size-cap { font-size: 9px; }
       .input-val-box { width: 110px; font-size: 18px; }
+      .photo-gallery { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .btn-submit { font-size: 15px; padding: 14px; }
     }
   </style>
 </head>
@@ -251,7 +397,7 @@
     <div class="header-bar">
       <div class="header-titles">
         <h1>ระบบคำนวณพาเลทและยอดบรรจุ</h1>
-        <p>คำนวณพาเลทเต็ม ชั้น กล่อง และเศษขวด สำหรับสายการผลิตส่งออก</p>
+        <p>คำนวณพาเลทเต็ม พาเลทเศษ เศษกล่อง และเศษขวด สำหรับสายการผลิตส่งออก</p>
       </div>
       <span class="badge-export">EXPORT ONLY</span>
     </div>
@@ -277,7 +423,7 @@
 
       <div class="section-tag">2. ยอดผลิตเป้าหมาย (ขวด)</div>
       <div class="input-row">
-        <input type="range" id="volumeSlider" class="slider-track" min="0" max="1000000" step="50" value="0" disabled>
+        <input type="range" id="volumeSlider" class="slider-track" min="0" max="1000000" step="12" value="0" disabled>
         <input type="number" id="volumeInput" class="input-val-box" min="0" max="1000000" value="0" placeholder="0" disabled>
       </div>
     </div>
@@ -289,7 +435,7 @@
         <span class="card-sub" id="cardFullPalletsBtl">0 ขวด</span>
       </div>
       <div class="sum-card">
-        <span class="card-title">ชั้นเต็ม (พาเลทเศษ)</span>
+        <span class="card-title">พาเลทเศษ</span>
         <div class="card-num" id="cardPartialLayers">0</div>
         <span class="card-sub" id="cardPartialLayersBtl">0 ขวด</span>
       </div>
@@ -299,7 +445,7 @@
         <span class="card-sub" id="cardExtraBoxesBtl">0 ขวด</span>
       </div>
       <div class="sum-card">
-        <span class="card-title">เศษขวดปลีก</span>
+        <span class="card-title">เศษขวด</span>
         <div class="card-num" id="cardLooseBottles">0</div>
         <span class="card-sub" id="cardLooseBottlesBtl">0 ขวด</span>
       </div>
@@ -307,7 +453,7 @@
 
     <div class="vis-box">
       <div class="vis-header">
-        <span class="title">ภาพจำลองการจัดเรียง (พาเลทสุดท้าย)</span>
+        <span class="title">ภาพจำลองการจัดเรียง (พาเลทเศษ)</span>
         <span class="badge alert" id="skuSpecLabel">⚠️ กรุณากดเลือกขนาดด้านบนก่อน</span>
       </div>
 
@@ -323,19 +469,19 @@
         </div>
 
         <div class="vis-card">
-          <span class="vis-card-title" id="labelPartialLayer">2. ชั้นเต็ม</span>
+          <span class="vis-card-title" id="labelPartialLayer">2. พาเลทเศษ</span>
           <div class="vis-area">
             <div class="layer-column" id="layerVisualContainer"></div>
           </div>
         </div>
 
         <div class="vis-card">
-          <span class="vis-card-title" id="labelLayerBoxes">3. กล่องบนชั้นเศษ</span>
+          <span class="vis-card-title" id="labelLayerBoxes">3. เศษกล่อง</span>
           <div class="vis-area" id="boxVisualContainer"></div>
         </div>
 
         <div class="vis-card">
-          <span class="vis-card-title" id="labelLoose">4. เศษขวดปลีก</span>
+          <span class="vis-card-title" id="labelLoose">4. เศษขวด</span>
           <div class="vis-area" style="flex-direction: column;">
             <span class="loose-num" id="visLooseNum">0</span>
             <span class="loose-txt">ขวด</span>
@@ -362,19 +508,19 @@
             <td style="text-align: right; font-weight: 800;" id="tblPalletTotal">0</td>
           </tr>
           <tr>
-            <td style="font-weight: 800;">ชั้นเต็มในพาเลทสุดท้าย (Layers)</td>
+            <td style="font-weight: 800;">พาเลทเศษ (Partial Pallet)</td>
             <td style="text-align: center;" id="tblLayerUnits">0 ชั้น</td>
             <td style="text-align: right;" id="tblLayerCap">0 ขวด</td>
             <td style="text-align: right; font-weight: 800;" id="tblLayerTotal">0</td>
           </tr>
           <tr>
-            <td style="font-weight: 800;">เศษกล่องในชั้นบนสุด (Boxes)</td>
+            <td style="font-weight: 800;">เศษกล่อง (Extra Boxes)</td>
             <td style="text-align: center;" id="tblBoxUnits">0 กล่อง</td>
             <td style="text-align: right;" id="tblBoxCap">0 ขวด</td>
             <td style="text-align: right; font-weight: 800;" id="tblBoxTotal">0</td>
           </tr>
           <tr>
-            <td style="font-weight: 800;">เศษขวดปลีก (Bottles)</td>
+            <td style="font-weight: 800;">เศษขวด (Loose Bottles)</td>
             <td style="text-align: center;" id="tblLooseUnits">0 ขวด</td>
             <td style="text-align: right;">1 ขวด</td>
             <td style="text-align: right; font-weight: 800;" id="tblLooseTotal">0</td>
@@ -387,9 +533,40 @@
       </table>
     </div>
 
+    <!-- Camera Section -->
+    <div class="camera-panel">
+      <div class="section-tag">บันทึกภาพถ่ายหน้างาน (Output Photo) <span style="color: #ef4444;">* จำเป็นต้องถ่าย</span></div>
+      
+      <div class="camera-btn-group">
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+        
+        <button type="button" class="btn-camera" onclick="document.getElementById('cameraInput').click()">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+          </svg>
+          ถ่ายภาพพาเลท / สินค้าจริง
+        </button>
+      </div>
+
+      <div id="photoGallery" class="photo-gallery">
+        <div class="photo-empty" id="photoEmptyText">ยังไม่มีรูปถ่าย กรุณากดถ่ายภาพหน้างานเพื่อเปิดใช้งานปุ่มส่งรายงาน</div>
+      </div>
+    </div>
+
+    <!-- Submit Action -->
+    <div class="submit-panel">
+      <button type="button" id="btnSubmitReport" class="btn-submit" onclick="sendReportToBackend()" disabled>
+        <span id="btnSubmitText">📸 กรุณาถ่ายภาพหน้างานก่อนส่งรายงาน</span>
+      </button>
+      <div id="statusMessage" class="status-msg"></div>
+    </div>
+
   </div>
 
   <script>
+    // URL Web App ตัวรวมศูนย์ (ชี้ไปที่โปรเจกต์ที่ deploy โค้ดกลาง)
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzD8Qo18MJ2zR7E_6dWvfNRQOx0DMMJoE1FrJX4FQXBUxa8-OloDBJbndcb3-hGJoEl/exec";
+
     const skuConfig = {
       '830_EXP': { name: 'ขนาด 830', layerPerPal: 8,  boxPerLayer: 14, btlPerBox: 12 },
       '450_EXP': { name: 'ขนาด 450', layerPerPal: 7,  boxPerLayer: 18, btlPerBox: 12 },
@@ -405,7 +582,7 @@
       volumeSlider.disabled = false;
       volumeInput.disabled = false;
 
-      // รีเซ็ตยอดเป็น 0 ทุกครั้งที่เปลี่ยนไซส์
+      volumeSlider.step = skuConfig[sku].btlPerBox;
       volumeInput.value = 0;
       volumeSlider.value = 0;
 
@@ -424,6 +601,18 @@
     volumeSlider.addEventListener('input', (e) => {
       volumeInput.value = e.target.value;
       calculate();
+    });
+
+    volumeInput.addEventListener('focus', function() {
+      if (this.value === '0') this.value = '';
+    });
+
+    volumeInput.addEventListener('blur', function() {
+      if (this.value === '' || isNaN(this.value)) {
+        this.value = '0';
+        volumeSlider.value = 0;
+        calculate();
+      }
     });
 
     volumeInput.addEventListener('input', (e) => {
@@ -451,7 +640,7 @@
       const extraBoxes = Math.floor(remAfterLayers / spec.btlPerBox);
       const looseBottles = remAfterLayers % spec.btlPerBox;
 
-      // สรุปยอด
+      // สรุปยอด KPI
       document.getElementById('cardFullPallets').textContent = fullPallets.toLocaleString();
       document.getElementById('cardFullPalletsBtl').textContent = (fullPallets * btlPerPal).toLocaleString() + ' ขวด';
 
@@ -471,16 +660,16 @@
       document.getElementById('labelPalletStack').textContent = `1. พาเลทเต็ม (${fullPallets.toLocaleString()})`;
       document.getElementById('visPalletNum').textContent = fullPallets.toLocaleString();
 
-      document.getElementById('labelPartialLayer').textContent = `2. ชั้นเต็ม (${partialLayers}/${spec.layerPerPal} ชั้น)`;
+      document.getElementById('labelPartialLayer').textContent = `2. พาเลทเศษ (${partialLayers}/${spec.layerPerPal} ชั้น)`;
       renderLayerVisual(partialLayers, spec.layerPerPal);
 
-      document.getElementById('labelLayerBoxes').textContent = `3. กล่อง (${extraBoxes}/${spec.boxPerLayer})`;
+      document.getElementById('labelLayerBoxes').textContent = `3. เศษกล่อง (${extraBoxes}/${spec.boxPerLayer})`;
       renderBoxVisual(extraBoxes, spec.boxPerLayer);
 
       document.getElementById('labelLoose').textContent = `4. เศษขวด (${looseBottles})`;
       document.getElementById('visLooseNum').textContent = looseBottles;
 
-      // ตาราง
+      // ตารางแจกแจง
       document.getElementById('tblPalletUnits').textContent = `${fullPallets.toLocaleString()} พาเลท`;
       document.getElementById('tblPalletCap').textContent = `${btlPerPal.toLocaleString()} ขวด`;
       document.getElementById('tblPalletTotal').textContent = (fullPallets * btlPerPal).toLocaleString();
@@ -590,6 +779,175 @@
 
       container.appendChild(wrap);
     }
+
+    // จัดการรูปภาพและการล็อกปุ่มส่งรายงาน (Poka-Yoke)
+    const cameraInput = document.getElementById('cameraInput');
+    const photoGallery = document.getElementById('photoGallery');
+    const photoEmptyText = document.getElementById('photoEmptyText');
+    const submitBtn = document.getElementById('btnSubmitReport');
+    const submitBtnText = document.getElementById('btnSubmitText');
+    let capturedImages = [];
+
+    function checkPhotoRequirement() {
+      if (capturedImages.length > 0) {
+        submitBtn.disabled = false;
+        submitBtnText.textContent = '🚀 ยืนยันยอดและส่งรายงานเข้า LINE';
+      } else {
+        submitBtn.disabled = true;
+        submitBtnText.textContent = '📸 กรุณาถ่ายภาพหน้างานก่อนส่งรายงาน';
+      }
+    }
+
+    cameraInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1024;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          capturedImages.push(compressedDataUrl);
+          updatePhotoGallery();
+          checkPhotoRequirement();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      this.value = '';
+    });
+
+    function updatePhotoGallery() {
+      photoGallery.innerHTML = '';
+      if (capturedImages.length === 0) {
+        photoGallery.appendChild(photoEmptyText);
+        return;
+      }
+
+      capturedImages.forEach((imgSrc, index) => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+
+        const img = document.createElement('img');
+        img.src = imgSrc;
+
+        const badge = document.createElement('span');
+        badge.className = 'photo-badge';
+        badge.textContent = `รูปที่ ${index + 1}`;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn-delete-photo';
+        delBtn.innerHTML = '✕';
+        delBtn.onclick = () => deletePhoto(index);
+
+        card.appendChild(img);
+        card.appendChild(badge);
+        card.appendChild(delBtn);
+        photoGallery.appendChild(card);
+      });
+    }
+
+    function deletePhoto(index) {
+      capturedImages.splice(index, 1);
+      updatePhotoGallery();
+      checkPhotoRequirement();
+    }
+
+    function resetForm() {
+      volumeSlider.value = 0;
+      volumeInput.value = 0;
+      capturedImages = [];
+      updatePhotoGallery();
+      checkPhotoRequirement();
+      calculate();
+    }
+
+    // ส่ง Payload ไปยัง Google Apps Script (ดึงค่าแน่นอนจากการ์ดสรุปยอด)
+    async function sendReportToBackend() {
+      const statusMsg = document.getElementById('statusMessage');
+      const targetDemand = parseInt(volumeInput.value) || 0;
+
+      if (!activeSku) {
+        alert('⚠️ กรุณาเลือกขนาดบรรจุภัณฑ์ (SIZE) ด้านบนก่อน');
+        return;
+      }
+
+      if (targetDemand <= 0) {
+        alert('⚠️ กรุณาระบุยอดผลิตเป้าหมายก่อนส่งรายงาน');
+        return;
+      }
+
+      if (capturedImages.length === 0) {
+        alert('⚠️ กรุณาถ่ายภาพพาเลท/สินค้าหน้างานอย่างน้อย 1 รูป ก่อนส่งรายงาน');
+        return;
+      }
+
+      const spec = skuConfig[activeSku];
+      const pFull = document.getElementById('cardFullPallets').textContent + ' พาเลท';
+      const pLayer = document.getElementById('cardPartialLayers').textContent + ' / ' + spec.layerPerPal + ' ชั้น';
+      const pBox = document.getElementById('cardExtraBoxes').textContent + ' / ' + spec.boxPerLayer + ' กล่อง';
+      const pLoose = document.getElementById('cardLooseBottles').textContent + ' ขวด';
+
+      const payload = {
+        sku: spec.name,
+        targetDemand: targetDemand,
+        fullPallets: pFull,
+        partialLayers: pLayer,
+        extraBoxes: pBox,
+        looseBottles: pLoose,
+        image: capturedImages[0]
+      };
+
+      submitBtn.disabled = true;
+      statusMsg.className = 'status-msg sending';
+      statusMsg.textContent = '⏳ กำลังบันทึกข้อมูลและส่งรายงานเข้า LINE...';
+
+      try {
+        await fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        statusMsg.className = 'status-msg success';
+        statusMsg.textContent = '✅ ส่งรายงานยอดผลิตเข้ากลุ่ม LINE เรียบร้อยแล้ว!';
+        
+        resetForm();
+
+        setTimeout(() => {
+          statusMsg.className = 'status-msg';
+          statusMsg.textContent = '';
+        }, 3500);
+
+      } catch (err) {
+        console.error(err);
+        statusMsg.className = 'status-msg error';
+        statusMsg.textContent = '❌ เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง';
+        checkPhotoRequirement();
+      }
+    }
+
+    checkPhotoRequirement();
   </script>
 </body>
 </html>
