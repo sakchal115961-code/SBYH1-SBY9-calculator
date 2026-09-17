@@ -91,7 +91,7 @@
       display: grid; 
       grid-template-columns: repeat(3, 1fr); 
       gap: 8px; 
-      margin-bottom: 14px; 
+      margin-bottom: 10px; 
     }
     .sku-btn {
       padding: 10px 4px;
@@ -118,16 +118,72 @@
     .sku-btn.active .size-name { color: var(--primary-dark); }
     .sku-btn.active .size-cap { color: var(--primary); }
 
+    /* Sub-option Selector for Countries */
+    .sub-option-container {
+      display: none;
+      background: #ffffff;
+      border: 1.5px dashed var(--primary-border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .sub-option-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dest-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    .dest-btn {
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .dest-btn:hover { background: #f1f5f9; }
+    .dest-btn.active {
+      background: #eff6ff;
+      color: var(--primary-dark);
+      border-color: var(--primary);
+      box-shadow: 0 2px 5px rgba(37, 99, 235, 0.15);
+    }
+    .flag-icon {
+      width: 22px;
+      height: 15px;
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
     /* Target Input & Slider */
     .input-row { 
       display: flex; 
       align-items: center; 
       gap: 10px; 
-      width: 100%;
+      width: 100%; 
+      margin-top: 10px;
     }
     .slider-track { 
       flex: 1; 
-      min-width: 0;
+      min-width: 0; 
       accent-color: var(--primary); 
       height: 6px; 
       cursor: pointer; 
@@ -225,14 +281,47 @@
     .loose-num { font-size: 28px; font-weight: 900; color: #334155; line-height: 1; }
     .loose-txt { font-size: 10px; font-weight: 700; color: #94a3b8; margin-top: 4px; }
 
-    /* Table */
+    /* Table & Sheet Simulation */
     .table-card { border-radius: 14px; border: 1px solid var(--border); overflow-x: auto; margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; background: #ffffff; min-width: 320px; }
-    th { background: #f8fafc; color: #475569; font-size: 10px; font-weight: 800; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; background: #ffffff; min-width: 380px; }
+    th { background: #f8fafc; color: #475569; font-size: 11px; font-weight: 800; padding: 8px 10px; border-bottom: 1px solid var(--border); }
     td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 600; }
     tr.total-row { background: #f8fafc; font-weight: 800; border-top: 1.5px solid var(--border); }
     tr.total-row td { color: #0f172a; font-size: 13px; padding: 10px; }
     .total-val { color: var(--primary); font-size: 15px; font-weight: 900; }
+
+    /* Production Sheet Simulator Card */
+    .sheet-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .sheet-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .sheet-table th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px 10px;
+      border: 1px solid #bfdbfe;
+    }
+    .sheet-table td {
+      border: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .sheet-table tr:hover {
+      background: #f8fafc;
+    }
 
     /* Camera Section */
     .camera-panel {
@@ -406,8 +495,8 @@
       <div class="section-tag">1. กรุณาเลือกขนาดบรรจุภัณฑ์ (SIZE)</div>
       <div class="sku-grid">
         <button class="sku-btn" id="btn-830_EXP" onclick="selectSku('830_EXP')">
-          <span class="size-name">ขนาด 830</span>
-          <span class="size-cap">1,344 ขวด/พาเลท</span>
+          <span class="size-name" id="label-830-name">ขนาด 830 (SG)</span>
+          <span class="size-cap" id="label-830-cap">1,344 ขวด/พาเลท</span>
         </button>
 
         <button class="sku-btn" id="btn-450_EXP" onclick="selectSku('450_EXP')">
@@ -419,6 +508,40 @@
           <span class="size-name">ขนาด 350</span>
           <span class="size-cap">2,160 ขวด/พาเลท</span>
         </button>
+      </div>
+
+      <!-- แถบเลือกปลายทางของขนาด 830 (SG vs LA) -->
+      <div class="sub-option-container" id="box830SubOptions">
+        <span class="sub-option-label">
+          📍 สายส่งออกขนาด 830:
+        </span>
+        <div class="dest-btn-group">
+          <!-- สิงคโปร์ (8 ชั้น) -->
+          <button type="button" class="dest-btn active" id="btnDestSG" onclick="set830Dest('SG')">
+            <svg class="flag-icon" viewBox="0 0 72 48">
+              <rect width="72" height="24" fill="#ED2939"/>
+              <rect y="24" width="72" height="24" fill="#FFFFFF"/>
+              <path d="M 23 12 A 8.5 8.5 0 1 1 14.5 3.5 A 7.5 7.5 0 1 0 23 12 Z" fill="#FFFFFF"/>
+              <polygon points="23,6 23.6,7.8 25.5,7.8 24,8.9 24.5,10.6 23,9.5 21.5,10.6 22,8.9 20.5,7.8 22.4,7.8" fill="#FFFFFF"/>
+              <polygon points="26.5,8.8 27.1,10.6 29,10.6 27.5,11.7 28,13.4 26.5,12.3 25,13.4 25.5,11.7 24,10.6 25.9,10.6" fill="#FFFFFF"/>
+              <polygon points="25,14.5 25.6,16.3 27.5,16.3 26,17.4 26.5,19.1 25,18 23.5,19.1 24,17.4 22.5,16.3 24.4,16.3" fill="#FFFFFF"/>
+              <polygon points="21,14.5 21.6,16.3 23.5,16.3 22,17.4 22.5,19.1 21,18 19.5,19.1 20,17.4 18.5,16.3 20.4,16.3" fill="#FFFFFF"/>
+              <polygon points="19.5,8.8 20.1,10.6 22,10.6 20.5,11.7 21,13.4 19.5,12.3 18,13.4 18.5,11.7 17,10.6 18.9,10.6" fill="#FFFFFF"/>
+            </svg>
+            สิงคโปร์ (8 ชั้น)
+          </button>
+
+          <!-- ลาว (7 ชั้น) -->
+          <button type="button" class="dest-btn" id="btnDestLA" onclick="set830Dest('LA')">
+            <svg class="flag-icon" viewBox="0 0 72 48">
+              <rect width="72" height="12" fill="#CE1126"/>
+              <rect y="12" width="72" height="24" fill="#002868"/>
+              <rect y="36" width="72" height="12" fill="#CE1126"/>
+              <circle cx="36" cy="24" r="9.6" fill="#FFFFFF"/>
+            </svg>
+            ลาว (7 ชั้น)
+          </button>
+        </div>
       </div>
 
       <div class="section-tag">2. ยอดผลิตเป้าหมาย (ขวด)</div>
@@ -490,13 +613,36 @@
       </div>
     </div>
 
+    <!-- ตารางจำลองสำหรับกรอกลงใบแสดงจำนวนการผลิตจริง (หน้างาน) -->
+    <div class="sheet-card">
+      <div class="section-tag" style="margin-bottom: 6px;">📝 ตารางเทียบสำหรับกรอก "ใบแสดงจำนวนการผลิต"</div>
+      <div style="overflow-x: auto;">
+        <table class="sheet-table">
+          <thead>
+            <tr>
+              <th style="text-align: center; width: 18%;">พาเลทที่</th>
+              <th style="text-align: center; width: 28%;">จำนวนลัง (กล่อง)</th>
+              <th style="text-align: right; width: 28%;">จำนวนขวด</th>
+              <th style="text-align: left;">หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody id="sheetTableBody">
+            <tr>
+              <td colspan="4" style="text-align: center; color: #94a3b8; font-weight: normal; padding: 12px;">ยังไม่มียอดผลิตเป้าหมาย</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ตารางสรุปรายละเอียด -->
     <div class="table-card">
       <table>
         <thead>
           <tr>
             <th style="text-align: left;">รายการ</th>
             <th style="text-align: center;">จำนวน</th>
-            <th style="text-align: right;">ความจุ</th>
+            <th style="text-align: right;">รวมลัง (กล่อง)</th>
             <th style="text-align: right;">รวมขวด</th>
           </tr>
         </thead>
@@ -504,29 +650,30 @@
           <tr>
             <td style="font-weight: 800;">พาเลทเต็ม (Full Pallets)</td>
             <td style="text-align: center;" id="tblPalletUnits">0 พาเลท</td>
-            <td style="text-align: right;" id="tblPalletCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 700;" id="tblPalletBoxes">0 กล่อง</td>
             <td style="text-align: right; font-weight: 800;" id="tblPalletTotal">0</td>
           </tr>
           <tr>
             <td style="font-weight: 800;">พาเลทเศษ (Partial Pallet)</td>
             <td style="text-align: center;" id="tblLayerUnits">0 ชั้น</td>
-            <td style="text-align: right;" id="tblLayerCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 700;" id="tblLayerBoxes">0 กล่อง</td>
             <td style="text-align: right; font-weight: 800;" id="tblLayerTotal">0</td>
           </tr>
           <tr>
             <td style="font-weight: 800;">เศษกล่อง (Extra Boxes)</td>
             <td style="text-align: center;" id="tblBoxUnits">0 กล่อง</td>
-            <td style="text-align: right;" id="tblBoxCap">0 ขวด</td>
+            <td style="text-align: right; font-weight: 700;" id="tblBoxBoxes">0 กล่อง</td>
             <td style="text-align: right; font-weight: 800;" id="tblBoxTotal">0</td>
           </tr>
           <tr>
             <td style="font-weight: 800;">เศษขวด (Loose Bottles)</td>
             <td style="text-align: center;" id="tblLooseUnits">0 ขวด</td>
-            <td style="text-align: right;">1 ขวด</td>
+            <td style="text-align: right; color: #94a3b8;">-</td>
             <td style="text-align: right; font-weight: 800;" id="tblLooseTotal">0</td>
           </tr>
           <tr class="total-row">
-            <td colspan="3">ยอดรวมทั้งหมด</td>
+            <td colspan="2">ยอดรวมทั้งหมด</td>
+            <td style="text-align: right; color: #1e3a8a; font-weight: 900;" id="tblGrandBoxes">0 กล่อง</td>
             <td style="text-align: right;" class="total-val" id="tblGrandTotal">0 ขวด</td>
           </tr>
         </tbody>
@@ -535,7 +682,7 @@
 
     <!-- Camera Section -->
     <div class="camera-panel">
-      <div class="section-tag">บันทึกภาพถ่ายหน้างาน (Output Photo) <span style="color: #ef4444;">* จำเป็นต้องถ่าย</span></div>
+      <div class="section-tag">บันทึกภาพถ่ายหน้างาน (OUTPUT PHOTO) <span style="color: #ef4444;">* จำเป็นต้องถ่าย</span></div>
       
       <div class="camera-btn-group">
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
@@ -564,23 +711,31 @@
   </div>
 
   <script>
-    // URL Web App ตัวรวมศูนย์ (ชี้ไปที่โปรเจกต์ที่ deploy โค้ดกลาง)
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzD8Qo18MJ2zR7E_6dWvfNRQOx0DMMJoE1FrJX4FQXBUxa8-OloDBJbndcb3-hGJoEl/exec";
 
     const skuConfig = {
-      '830_EXP': { name: 'ขนาด 830', layerPerPal: 8,  boxPerLayer: 14, btlPerBox: 12 },
-      '450_EXP': { name: 'ขนาด 450', layerPerPal: 7,  boxPerLayer: 18, btlPerBox: 12 },
+      '830_EXP': { name: 'ขนาด 830 (SG)', layerPerPal: 8, boxPerLayer: 14, btlPerBox: 12 },
+      '450_EXP': { name: 'ขนาด 450', layerPerPal: 7, boxPerLayer: 18, btlPerBox: 12 },
       '350_EXP': { name: 'ขนาด 350', layerPerPal: 10, boxPerLayer: 18, btlPerBox: 12 }
     };
 
     let activeSku = null;
+    let dest830 = 'SG';
+    
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeInput = document.getElementById('volumeInput');
+    const box830SubOptions = document.getElementById('box830SubOptions');
 
     function selectSku(sku) {
       activeSku = sku;
       volumeSlider.disabled = false;
       volumeInput.disabled = false;
+
+      if (sku === '830_EXP') {
+        box830SubOptions.style.display = 'flex';
+      } else {
+        box830SubOptions.style.display = 'none';
+      }
 
       volumeSlider.step = skuConfig[sku].btlPerBox;
       volumeInput.value = 0;
@@ -594,6 +749,32 @@
           btn.classList.remove('active');
         }
       });
+
+      calculate();
+    }
+
+    function set830Dest(mode) {
+      dest830 = mode;
+      const btnSG = document.getElementById('btnDestSG');
+      const btnLA = document.getElementById('btnDestLA');
+      const labelCap = document.getElementById('label-830-cap');
+      const labelName = document.getElementById('label-830-name');
+
+      if (mode === 'LA') {
+        btnLA.classList.add('active');
+        btnSG.classList.remove('active');
+        skuConfig['830_EXP'].layerPerPal = 7;
+        skuConfig['830_EXP'].name = 'ขนาด 830 (LA)';
+        labelCap.textContent = '1,176 ขวด/พาเลท (7 ชั้น)';
+        labelName.textContent = 'ขนาด 830 (LA)';
+      } else {
+        btnSG.classList.add('active');
+        btnLA.classList.remove('active');
+        skuConfig['830_EXP'].layerPerPal = 8;
+        skuConfig['830_EXP'].name = 'ขนาด 830 (SG)';
+        labelCap.textContent = '1,344 ขวด/พาเลท (8 ชั้น)';
+        labelName.textContent = 'ขนาด 830 (SG)';
+      }
 
       calculate();
     }
@@ -628,6 +809,7 @@
       const totalDemand = Math.max(0, parseInt(volumeInput.value) || 0);
       const spec = skuConfig[activeSku];
 
+      const boxesPerPallet = spec.boxPerLayer * spec.layerPerPal;
       const btlPerLayer = spec.boxPerLayer * spec.btlPerBox;
       const btlPerPal = btlPerLayer * spec.layerPerPal;
 
@@ -669,23 +851,78 @@
       document.getElementById('labelLoose').textContent = `4. เศษขวด (${looseBottles})`;
       document.getElementById('visLooseNum').textContent = looseBottles;
 
+      // คำนวณจำนวนกล่อง
+      const fullPalletBoxes = fullPallets * boxesPerPallet;
+      const partialLayerBoxes = partialLayers * spec.boxPerLayer;
+      const totalBoxes = fullPalletBoxes + partialLayerBoxes + extraBoxes;
+
       // ตารางแจกแจง
       document.getElementById('tblPalletUnits').textContent = `${fullPallets.toLocaleString()} พาเลท`;
-      document.getElementById('tblPalletCap').textContent = `${btlPerPal.toLocaleString()} ขวด`;
+      document.getElementById('tblPalletBoxes').textContent = `${fullPalletBoxes.toLocaleString()} กล่อง`;
       document.getElementById('tblPalletTotal').textContent = (fullPallets * btlPerPal).toLocaleString();
 
       document.getElementById('tblLayerUnits').textContent = `${partialLayers} / ${spec.layerPerPal} ชั้น`;
-      document.getElementById('tblLayerCap').textContent = `${btlPerLayer.toLocaleString()} ขวด`;
+      document.getElementById('tblLayerBoxes').textContent = `${partialLayerBoxes.toLocaleString()} กล่อง`;
       document.getElementById('tblLayerTotal').textContent = (partialLayers * btlPerLayer).toLocaleString();
 
       document.getElementById('tblBoxUnits').textContent = `${extraBoxes} / ${spec.boxPerLayer} กล่อง`;
-      document.getElementById('tblBoxCap').textContent = `${spec.btlPerBox} ขวด`;
+      document.getElementById('tblBoxBoxes').textContent = `${extraBoxes.toLocaleString()} กล่อง`;
       document.getElementById('tblBoxTotal').textContent = (extraBoxes * spec.btlPerBox).toLocaleString();
 
       document.getElementById('tblLooseUnits').textContent = `${looseBottles} ขวด`;
       document.getElementById('tblLooseTotal').textContent = looseBottles.toLocaleString();
 
+      document.getElementById('tblGrandBoxes').textContent = `${totalBoxes.toLocaleString()} กล่อง`;
       document.getElementById('tblGrandTotal').textContent = totalDemand.toLocaleString() + ' ขวด';
+
+      // จำลองตารางใบแสดงจำนวนการผลิต
+      renderSheetTable(fullPallets, boxesPerPallet, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, spec.btlPerBox);
+    }
+
+    // สร้างแถวข้อมูลเลียนแบบใบผลิตจริง
+    function renderSheetTable(fullPallets, boxesPerPal, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, btlPerBox) {
+      const tbody = document.getElementById('sheetTableBody');
+      tbody.innerHTML = '';
+
+      if (fullPallets === 0 && partialLayers === 0 && extraBoxes === 0 && looseBottles === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 12px;">ยังไม่มียอดผลิตเป้าหมาย</td></tr>`;
+        return;
+      }
+
+      let palletIndex = 1;
+
+      // 1. พาเลทเต็ม
+      for (let i = 0; i < fullPallets; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td style="text-align: center;">${palletIndex}</td>
+          <td style="text-align: center; color: #1e40af; font-weight: 800;">${boxesPerPal.toLocaleString()}</td>
+          <td style="text-align: right;">${btlPerPal.toLocaleString()}</td>
+          <td style="color: #16a34a; font-weight: 700;">พาเลทเต็ม (${palletIndex})</td>
+        `;
+        tbody.appendChild(row);
+        palletIndex++;
+      }
+
+      // 2. พาเลทเศษ (ถ้ามี)
+      const partialTotalBoxes = partialLayerBoxes + extraBoxes;
+      const partialTotalBtl = (partialTotalBoxes * btlPerBox) + looseBottles;
+
+      if (partialTotalBtl > 0) {
+        const row = document.createElement('tr');
+        let note = `พาเลทเศษ (${partialLayers} ชั้น`;
+        if (extraBoxes > 0) note += ` + เศษ ${extraBoxes} กล่อง`;
+        if (looseBottles > 0) note += ` + เศษ ${looseBottles} ขวด`;
+        note += `)`;
+
+        row.innerHTML = `
+          <td style="text-align: center;">${palletIndex}</td>
+          <td style="text-align: center; color: #b45309; font-weight: 900;">${partialTotalBoxes.toLocaleString()} ${looseBottles > 0 ? `<span style="font-size: 10px; color: #ef4444;">(+${looseBottles}ขวด)</span>` : ''}</td>
+          <td style="text-align: right; color: #b45309; font-weight: 800;">${partialTotalBtl.toLocaleString()}</td>
+          <td style="color: #b45309; font-weight: 700;">${note}</td>
+        `;
+        tbody.appendChild(row);
+      }
     }
 
     function renderLayerVisual(activeLayers, totalLayers) {
@@ -780,7 +1017,6 @@
       container.appendChild(wrap);
     }
 
-    // จัดการรูปภาพและการล็อกปุ่มส่งรายงาน (Poka-Yoke)
     const cameraInput = document.getElementById('cameraInput');
     const photoGallery = document.getElementById('photoGallery');
     const photoEmptyText = document.getElementById('photoEmptyText');
@@ -881,7 +1117,6 @@
       calculate();
     }
 
-    // ส่ง Payload ไปยัง Google Apps Script (ดึงค่าแน่นอนจากการ์ดสรุปยอด)
     async function sendReportToBackend() {
       const statusMsg = document.getElementById('statusMessage');
       const targetDemand = parseInt(volumeInput.value) || 0;
