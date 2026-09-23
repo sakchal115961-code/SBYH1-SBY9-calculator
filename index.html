@@ -118,7 +118,7 @@
     .sku-btn.active .size-name { color: var(--primary-dark); }
     .sku-btn.active .size-cap { color: var(--primary); }
 
-    /* Sub-option Selector for Countries */
+    /* Sub-option Selector for Countries/Types */
     .sub-option-container {
       display: none;
       background: #ffffff;
@@ -277,6 +277,51 @@
     .box-cell { border-radius: 2px; border: 1px solid #cbd5e1; font-size: 8px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
     .box-cell.active { background: #3b82f6; border-color: var(--primary-dark); color: #ffffff; }
     .box-cell.inactive { background: #f8fafc; color: #cbd5e1; }
+
+    /* Crate Cell สำหรับ 350 LA (ลังแดง) */
+    .crate-cell {
+      border: 1px solid #b91c1c;
+      border-radius: 4px;
+      padding: 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .crate-cell.active {
+      background: #ef4444;
+      box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+    }
+    .crate-cell.inactive {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      opacity: 0.45;
+    }
+    .crate-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 4px);
+      gap: 1.5px;
+    }
+    .crate-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+    .crate-cell.inactive .crate-dot {
+      background: #f87171;
+    }
+    .crate-title {
+      font-size: 7px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-top: 1px;
+      line-height: 1;
+    }
+    .crate-cell.inactive .crate-title {
+      color: #dc2626;
+    }
 
     .loose-num { font-size: 28px; font-weight: 900; color: #334155; line-height: 1; }
     .loose-txt { font-size: 10px; font-weight: 700; color: #94a3b8; margin-top: 4px; }
@@ -486,7 +531,7 @@
     <div class="header-bar">
       <div class="header-titles">
         <h1>ระบบคำนวณพาเลทและยอดบรรจุ</h1>
-        <p>คำนวณพาเลทเต็ม พาเลทเศษ เศษกล่อง และเศษขวด สำหรับสายการผลิตส่งออก</p>
+        <p>คำนวณพาเลทเต็ม พาเลทเศษ เศษกล่อง/ลัง และเศษขวด สำหรับสายการผลิตส่งออก</p>
       </div>
       <span class="badge-export">EXPORT ONLY</span>
     </div>
@@ -505,8 +550,8 @@
         </button>
 
         <button class="sku-btn" id="btn-350_EXP" onclick="selectSku('350_EXP')">
-          <span class="size-name">ขนาด 350</span>
-          <span class="size-cap">2,160 ขวด/พาเลท</span>
+          <span class="size-name" id="label-350-name">ขนาด 350</span>
+          <span class="size-cap" id="label-350-cap">2,160 ขวด/พาเลท</span>
         </button>
       </div>
 
@@ -516,7 +561,6 @@
           📍 สายส่งออกขนาด 830:
         </span>
         <div class="dest-btn-group">
-          <!-- สิงคโปร์ (8 ชั้น) -->
           <button type="button" class="dest-btn active" id="btnDestSG" onclick="set830Dest('SG')">
             <svg class="flag-icon" viewBox="0 0 72 48">
               <rect width="72" height="24" fill="#ED2939"/>
@@ -531,7 +575,6 @@
             สิงคโปร์ (8 ชั้น)
           </button>
 
-          <!-- ลาว (7 ชั้น) -->
           <button type="button" class="dest-btn" id="btnDestLA" onclick="set830Dest('LA')">
             <svg class="flag-icon" viewBox="0 0 72 48">
               <rect width="72" height="12" fill="#CE1126"/>
@@ -540,6 +583,28 @@
               <circle cx="36" cy="24" r="9.6" fill="#FFFFFF"/>
             </svg>
             ลาว (7 ชั้น)
+          </button>
+        </div>
+      </div>
+
+      <!-- แถบเลือกประเภทของขนาด 350 (ปกติ vs LA) -->
+      <div class="sub-option-container" id="box350SubOptions">
+        <span class="sub-option-label">
+          📦 รูปแบบบรรจุภัณฑ์ขนาด 350:
+        </span>
+        <div class="dest-btn-group">
+          <button type="button" class="dest-btn active" id="btn350Normal" onclick="set350Type('NORMAL')">
+            📦 350 กล่องปกติ (10 ชั้น)
+          </button>
+
+          <button type="button" class="dest-btn" id="btn350LA" onclick="set350Type('LA')">
+            <svg class="flag-icon" viewBox="0 0 72 48">
+              <rect width="72" height="12" fill="#CE1126"/>
+              <rect y="12" width="72" height="24" fill="#002868"/>
+              <rect y="36" width="72" height="12" fill="#CE1126"/>
+              <circle cx="36" cy="24" r="9.6" fill="#FFFFFF"/>
+            </svg>
+            350 LA ลังแดง (6 ชั้น)
           </button>
         </div>
       </div>
@@ -563,7 +628,7 @@
         <span class="card-sub" id="cardPartialLayersBtl">0 ขวด</span>
       </div>
       <div class="sum-card">
-        <span class="card-title">เศษกล่อง</span>
+        <span class="card-title" id="cardExtraBoxesTitle">เศษกล่อง</span>
         <div class="card-num" id="cardExtraBoxes">0</div>
         <span class="card-sub" id="cardExtraBoxesBtl">0 ขวด</span>
       </div>
@@ -621,7 +686,7 @@
           <thead>
             <tr>
               <th style="text-align: center; width: 18%;">พาเลทที่</th>
-              <th style="text-align: center; width: 28%;">จำนวนลัง (กล่อง)</th>
+              <th style="text-align: center; width: 28%;" id="sheetTableUnitTh">จำนวนลัง (กล่อง)</th>
               <th style="text-align: right; width: 28%;">จำนวนขวด</th>
               <th style="text-align: left;">หมายเหตุ</th>
             </tr>
@@ -642,7 +707,7 @@
           <tr>
             <th style="text-align: left;">รายการ</th>
             <th style="text-align: center;">จำนวน</th>
-            <th style="text-align: right;">รวมลัง (กล่อง)</th>
+            <th style="text-align: right;" id="tblThUnit">รวมลัง (กล่อง)</th>
             <th style="text-align: right;">รวมขวด</th>
           </tr>
         </thead>
@@ -660,7 +725,7 @@
             <td style="text-align: right; font-weight: 800;" id="tblLayerTotal">0</td>
           </tr>
           <tr>
-            <td style="font-weight: 800;">เศษกล่อง (Extra Boxes)</td>
+            <td style="font-weight: 800;" id="tblRowBoxLabel">เศษกล่อง (Extra Boxes)</td>
             <td style="text-align: center;" id="tblBoxUnits">0 กล่อง</td>
             <td style="text-align: right; font-weight: 700;" id="tblBoxBoxes">0 กล่อง</td>
             <td style="text-align: right; font-weight: 800;" id="tblBoxTotal">0</td>
@@ -714,28 +779,28 @@
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzD8Qo18MJ2zR7E_6dWvfNRQOx0DMMJoE1FrJX4FQXBUxa8-OloDBJbndcb3-hGJoEl/exec";
 
     const skuConfig = {
-      '830_EXP': { name: 'ขนาด 830 (SG)', layerPerPal: 8, boxPerLayer: 14, btlPerBox: 12 },
-      '450_EXP': { name: 'ขนาด 450', layerPerPal: 7, boxPerLayer: 18, btlPerBox: 12 },
-      '350_EXP': { name: 'ขนาด 350', layerPerPal: 10, boxPerLayer: 18, btlPerBox: 12 }
+      '830_EXP': { name: 'ขนาด 830 (SG)', layerPerPal: 8, boxPerLayer: 14, btlPerBox: 12, unitName: 'กล่อง' },
+      '450_EXP': { name: 'ขนาด 450', layerPerPal: 7, boxPerLayer: 18, btlPerBox: 12, unitName: 'กล่อง' },
+      '350_EXP': { name: 'ขนาด 350 (ปกติ)', layerPerPal: 10, boxPerLayer: 18, btlPerBox: 12, unitName: 'กล่อง' }
     };
 
     let activeSku = null;
     let dest830 = 'SG';
+    let type350 = 'NORMAL';
     
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeInput = document.getElementById('volumeInput');
     const box830SubOptions = document.getElementById('box830SubOptions');
+    const box350SubOptions = document.getElementById('box350SubOptions');
 
     function selectSku(sku) {
       activeSku = sku;
       volumeSlider.disabled = false;
       volumeInput.disabled = false;
 
-      if (sku === '830_EXP') {
-        box830SubOptions.style.display = 'flex';
-      } else {
-        box830SubOptions.style.display = 'none';
-      }
+      // แสดงหรือซ่อนแถบตัวเลือกรอง
+      box830SubOptions.style.display = (sku === '830_EXP') ? 'flex' : 'none';
+      box350SubOptions.style.display = (sku === '350_EXP') ? 'flex' : 'none';
 
       volumeSlider.step = skuConfig[sku].btlPerBox;
       volumeInput.value = 0;
@@ -779,6 +844,39 @@
       calculate();
     }
 
+    function set350Type(mode) {
+      type350 = mode;
+      const btnNormal = document.getElementById('btn350Normal');
+      const btnLA = document.getElementById('btn350LA');
+      const labelCap = document.getElementById('label-350-cap');
+      const labelName = document.getElementById('label-350-name');
+
+      if (mode === 'LA') {
+        btnLA.classList.add('active');
+        btnNormal.classList.remove('active');
+        skuConfig['350_EXP'].name = 'ขนาด 350 LA (ลัง)';
+        skuConfig['350_EXP'].layerPerPal = 6;
+        skuConfig['350_EXP'].boxPerLayer = 6;
+        skuConfig['350_EXP'].btlPerBox = 36;
+        skuConfig['350_EXP'].unitName = 'ลัง';
+        labelCap.textContent = '1,296 ขวด/พาเลท (6 ชั้น)';
+        labelName.textContent = 'ขนาด 350 (LA)';
+      } else {
+        btnNormal.classList.add('active');
+        btnLA.classList.remove('active');
+        skuConfig['350_EXP'].name = 'ขนาด 350 (ปกติ)';
+        skuConfig['350_EXP'].layerPerPal = 10;
+        skuConfig['350_EXP'].boxPerLayer = 18;
+        skuConfig['350_EXP'].btlPerBox = 12;
+        skuConfig['350_EXP'].unitName = 'กล่อง';
+        labelCap.textContent = '2,160 ขวด/พาเลท (10 ชั้น)';
+        labelName.textContent = 'ขนาด 350';
+      }
+
+      volumeSlider.step = skuConfig['350_EXP'].btlPerBox;
+      calculate();
+    }
+
     volumeSlider.addEventListener('input', (e) => {
       volumeInput.value = e.target.value;
       calculate();
@@ -808,6 +906,7 @@
 
       const totalDemand = Math.max(0, parseInt(volumeInput.value) || 0);
       const spec = skuConfig[activeSku];
+      const unit = spec.unitName || 'กล่อง';
 
       const boxesPerPallet = spec.boxPerLayer * spec.layerPerPal;
       const btlPerLayer = spec.boxPerLayer * spec.btlPerBox;
@@ -821,6 +920,13 @@
 
       const extraBoxes = Math.floor(remAfterLayers / spec.btlPerBox);
       const looseBottles = remAfterLayers % spec.btlPerBox;
+
+      // ปรับเปลี่ยน Label ตาม Unit (กล่อง / ลัง)
+      document.getElementById('cardExtraBoxesTitle').textContent = `เศษ${unit}`;
+      document.getElementById('labelLayerBoxes').textContent = `3. เศษ${unit} (${extraBoxes}/${spec.boxPerLayer})`;
+      document.getElementById('tblRowBoxLabel').textContent = `เศษ${unit} (Extra ${unit === 'ลัง' ? 'Crates' : 'Boxes'})`;
+      document.getElementById('tblThUnit').textContent = `รวม${unit}`;
+      document.getElementById('sheetTableUnitTh').textContent = `จำนวน${unit}`;
 
       // สรุปยอด KPI
       document.getElementById('cardFullPallets').textContent = fullPallets.toLocaleString();
@@ -837,7 +943,7 @@
 
       const specBadge = document.getElementById('skuSpecLabel');
       specBadge.className = 'badge';
-      specBadge.textContent = `${spec.btlPerBox} ขวด/กล่อง · ${spec.boxPerLayer} กล่อง/ชั้น · ${spec.layerPerPal} ชั้น/พาเลท (${btlPerPal.toLocaleString()} ขวด/พาเลท)`;
+      specBadge.textContent = `${spec.btlPerBox} ขวด/${unit} · ${spec.boxPerLayer} ${unit}/ชั้น · ${spec.layerPerPal} ชั้น/พาเลท (${btlPerPal.toLocaleString()} ขวด/พาเลท)`;
       
       document.getElementById('labelPalletStack').textContent = `1. พาเลทเต็ม (${fullPallets.toLocaleString()})`;
       document.getElementById('visPalletNum').textContent = fullPallets.toLocaleString();
@@ -845,42 +951,41 @@
       document.getElementById('labelPartialLayer').textContent = `2. พาเลทเศษ (${partialLayers}/${spec.layerPerPal} ชั้น)`;
       renderLayerVisual(partialLayers, spec.layerPerPal);
 
-      document.getElementById('labelLayerBoxes').textContent = `3. เศษกล่อง (${extraBoxes}/${spec.boxPerLayer})`;
       renderBoxVisual(extraBoxes, spec.boxPerLayer);
 
       document.getElementById('labelLoose').textContent = `4. เศษขวด (${looseBottles})`;
       document.getElementById('visLooseNum').textContent = looseBottles;
 
-      // คำนวณจำนวนกล่อง
+      // คำนวณจำนวนกล่อง/ลัง
       const fullPalletBoxes = fullPallets * boxesPerPallet;
       const partialLayerBoxes = partialLayers * spec.boxPerLayer;
       const totalBoxes = fullPalletBoxes + partialLayerBoxes + extraBoxes;
 
       // ตารางแจกแจง
       document.getElementById('tblPalletUnits').textContent = `${fullPallets.toLocaleString()} พาเลท`;
-      document.getElementById('tblPalletBoxes').textContent = `${fullPalletBoxes.toLocaleString()} กล่อง`;
+      document.getElementById('tblPalletBoxes').textContent = `${fullPalletBoxes.toLocaleString()} ${unit}`;
       document.getElementById('tblPalletTotal').textContent = (fullPallets * btlPerPal).toLocaleString();
 
       document.getElementById('tblLayerUnits').textContent = `${partialLayers} / ${spec.layerPerPal} ชั้น`;
-      document.getElementById('tblLayerBoxes').textContent = `${partialLayerBoxes.toLocaleString()} กล่อง`;
+      document.getElementById('tblLayerBoxes').textContent = `${partialLayerBoxes.toLocaleString()} ${unit}`;
       document.getElementById('tblLayerTotal').textContent = (partialLayers * btlPerLayer).toLocaleString();
 
-      document.getElementById('tblBoxUnits').textContent = `${extraBoxes} / ${spec.boxPerLayer} กล่อง`;
-      document.getElementById('tblBoxBoxes').textContent = `${extraBoxes.toLocaleString()} กล่อง`;
+      document.getElementById('tblBoxUnits').textContent = `${extraBoxes} / ${spec.boxPerLayer} ${unit}`;
+      document.getElementById('tblBoxBoxes').textContent = `${extraBoxes.toLocaleString()} ${unit}`;
       document.getElementById('tblBoxTotal').textContent = (extraBoxes * spec.btlPerBox).toLocaleString();
 
       document.getElementById('tblLooseUnits').textContent = `${looseBottles} ขวด`;
       document.getElementById('tblLooseTotal').textContent = looseBottles.toLocaleString();
 
-      document.getElementById('tblGrandBoxes').textContent = `${totalBoxes.toLocaleString()} กล่อง`;
+      document.getElementById('tblGrandBoxes').textContent = `${totalBoxes.toLocaleString()} ${unit}`;
       document.getElementById('tblGrandTotal').textContent = totalDemand.toLocaleString() + ' ขวด';
 
       // จำลองตารางใบแสดงจำนวนการผลิต
-      renderSheetTable(fullPallets, boxesPerPallet, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, spec.btlPerBox);
+      renderSheetTable(fullPallets, boxesPerPallet, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, spec.btlPerBox, unit);
     }
 
     // สร้างแถวข้อมูลเลียนแบบใบผลิตจริง
-    function renderSheetTable(fullPallets, boxesPerPal, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, btlPerBox) {
+    function renderSheetTable(fullPallets, boxesPerPal, btlPerPal, partialLayerBoxes, partialLayers, extraBoxes, looseBottles, btlPerBox, unit) {
       const tbody = document.getElementById('sheetTableBody');
       tbody.innerHTML = '';
 
@@ -896,7 +1001,7 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td style="text-align: center;">${palletIndex}</td>
-          <td style="text-align: center; color: #1e40af; font-weight: 800;">${boxesPerPal.toLocaleString()}</td>
+          <td style="text-align: center; color: #1e40af; font-weight: 800;">${boxesPerPal.toLocaleString()} ${unit}</td>
           <td style="text-align: right;">${btlPerPal.toLocaleString()}</td>
           <td style="color: #16a34a; font-weight: 700;">พาเลทเต็ม (${palletIndex})</td>
         `;
@@ -911,13 +1016,13 @@
       if (partialTotalBtl > 0) {
         const row = document.createElement('tr');
         let note = `พาเลทเศษ (${partialLayers} ชั้น`;
-        if (extraBoxes > 0) note += ` + เศษ ${extraBoxes} กล่อง`;
+        if (extraBoxes > 0) note += ` + เศษ ${extraBoxes} ${unit}`;
         if (looseBottles > 0) note += ` + เศษ ${looseBottles} ขวด`;
         note += `)`;
 
         row.innerHTML = `
           <td style="text-align: center;">${palletIndex}</td>
-          <td style="text-align: center; color: #b45309; font-weight: 900;">${partialTotalBoxes.toLocaleString()} ${looseBottles > 0 ? `<span style="font-size: 10px; color: #ef4444;">(+${looseBottles}ขวด)</span>` : ''}</td>
+          <td style="text-align: center; color: #b45309; font-weight: 900;">${partialTotalBoxes.toLocaleString()} ${unit} ${looseBottles > 0 ? `<span style="font-size: 10px; color: #ef4444;">(+${looseBottles}ขวด)</span>` : ''}</td>
           <td style="text-align: right; color: #b45309; font-weight: 800;">${partialTotalBtl.toLocaleString()}</td>
           <td style="color: #b45309; font-weight: 700;">${note}</td>
         `;
@@ -943,6 +1048,7 @@
       const wrap = document.createElement('div');
       wrap.className = 'pallet-layout-container';
 
+      // 1. ขนาด 830
       if (activeSku === '830_EXP') {
         wrap.style.display = 'flex';
         wrap.style.flexDirection = 'column';
@@ -977,6 +1083,36 @@
         wrap.appendChild(topGrid);
         wrap.appendChild(bottomGrid);
 
+      // 2. ขนาด 350 LA (จัดเรียงลังแดง 6 ลังต่อชั้น แถวละ 3 ลัง x 2 แถว พร้อมช่องขวด 36 รู)
+      } else if (activeSku === '350_EXP' && type350 === 'LA') {
+        wrap.style.display = 'grid';
+        wrap.style.gridTemplateColumns = 'repeat(3, 34px)';
+        wrap.style.gridTemplateRows = 'repeat(2, 38px)';
+        wrap.style.gap = '3px';
+        wrap.style.padding = '3px';
+
+        for (let c = 1; c <= 6; c++) {
+          const crate = document.createElement('div');
+          crate.className = `crate-cell ${c <= activeBoxes ? 'active' : 'inactive'}`;
+
+          const dotGrid = document.createElement('div');
+          dotGrid.className = 'crate-grid';
+          for (let d = 0; d < 36; d++) {
+            const dot = document.createElement('div');
+            dot.className = 'crate-dot';
+            dotGrid.appendChild(dot);
+          }
+
+          const cTitle = document.createElement('div');
+          cTitle.className = 'crate-title';
+          cTitle.textContent = `ลัง ${c}`;
+
+          crate.appendChild(dotGrid);
+          crate.appendChild(cTitle);
+          wrap.appendChild(crate);
+        }
+
+      // 3. ขนาด 450 และ 350 กล่องปกติ (18 กล่อง/ชั้น)
       } else if (activeSku === '450_EXP' || activeSku === '350_EXP') {
         wrap.style.display = 'flex';
         wrap.style.flexDirection = 'row';
@@ -1137,9 +1273,10 @@
       }
 
       const spec = skuConfig[activeSku];
+      const unit = spec.unitName || 'กล่อง';
       const pFull = document.getElementById('cardFullPallets').textContent + ' พาเลท';
       const pLayer = document.getElementById('cardPartialLayers').textContent + ' / ' + spec.layerPerPal + ' ชั้น';
-      const pBox = document.getElementById('cardExtraBoxes').textContent + ' / ' + spec.boxPerLayer + ' กล่อง';
+      const pBox = document.getElementById('cardExtraBoxes').textContent + ' / ' + spec.boxPerLayer + ` ${unit}`;
       const pLoose = document.getElementById('cardLooseBottles').textContent + ' ขวด';
 
       const payload = {
